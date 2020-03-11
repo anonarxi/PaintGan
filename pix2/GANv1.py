@@ -7,7 +7,8 @@ import numpy as np
 from PIL import Image
 import os
 import keras as keras
-
+import tensorflow as tf
+from keras import backend as K
 
 def generaInit(imp,nbGen):
 
@@ -103,7 +104,7 @@ def train(batch,colonne,ligne,epochs,save,size,data):
 
 	y_real = np.ones((batch, 1))
 	y_fake = np.zeros((batch, 1))
-
+	
 
 	cnt = 1
 	for epoch in range(epochs):
@@ -119,20 +120,20 @@ def train(batch,colonne,ligne,epochs,save,size,data):
 		discriminator_metric = 0.5 * np.add(discriminator_metric_real, discriminator_metric_generated)
 		generator_metric = combined.train_on_batch(datmap[idx], y_real)
 		if epoch % save == 0:
-			save_images(cnt, datmap[idx],size,4,7)
-			cnt += 1 
-			print(str(epoch)+' epoch, Discriminator accuracy: '+str(100*  discriminator_metric[1])+', Generator accuracy: '+str(100 * generator_metric[1]))
+			save_images(cnt, datmap[idx],size,1,1)
+			cnt += 1		
 		if epoch % 50 == 0:
+			print(str(epoch)+' epoch, Discriminator accuracy: '+str(100*  discriminator_metric[1])+', Generator accuracy: '+str(100 * generator_metric[1]))
 			discriminator.save('discriminator.h5')
 			generator.save('generator.h5')
 
 	
-	save_images(cnt, datmap[idx],size,4,7)
+	save_images(cnt, datmap[idx],size,1,1)
 	discriminator.save('discriminator.h5')
 	generator.save('generator.h5')
 	
 	
-	
+
 imageSize=256
 image_shape = (imageSize, imageSize, 3)
 if os.path.exists('discriminator.h5'):
@@ -146,4 +147,4 @@ else:
 	generator = generaInit(image_shape,5)
     
 	
-train(32,7,4,10000,20,imageSize,np.load('maps.npz'))
+train(8,7,4,10000,350,imageSize,np.load('maps.npz'))
